@@ -1,14 +1,14 @@
 package reverseproxy
 
 import (
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"oauth2-proxy-nexus3/authprovider"
+	"oauth2-proxy-nexus3/logger"
 	"oauth2-proxy-nexus3/nexus"
 
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
 
 const routeName = "main"
@@ -22,7 +22,7 @@ type ReverseProxy struct {
 // New initializes and returns a new `ReverseProxy`.
 func New(
 	upstreamURL, authproviderURL, nexusURL *url.URL,
-	accessTokenHeader, nexusAdminUser, nexusAdminPassword, nexusRutHeader string,
+	authprovider, accessTokenHeader, nexusAdminUser, nexusAdminPassword, nexusRutHeader string,
 ) *ReverseProxy {
 	s := ReverseProxy{
 		Router: mux.NewRouter().StrictSlash(true),
@@ -39,8 +39,7 @@ func New(
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var (
 				writeErrCb = func(msg string, code int) {
-					log.Printf(`Return with HTTP %d: %s`, code, msg)
-
+					logger.Error("HTTP Server", zap.Int("code", code), zap.String("msg", msg))
 					http.Error(w, msg, code)
 				}
 
@@ -53,8 +52,12 @@ func New(
 				return
 			}
 
-			var authproviderClient authprovider.Client
-			authproviderClient = newAuthproviderClient(authproviderURL)
+			authproviderClient, err := newAuthproviderClient(authprovider, authproviderURL)
+			if err != nil {
+				writeErrCb(err.Error(), http.StatusNotImplemented)
+
+				return
+			}
 
 			userInfo, err := authproviderClient.GetUserInfo(accessToken)
 			if err != nil {
@@ -76,6 +79,11 @@ func New(
 			r.Header.Set(nexusRutHeader, userInfo.Username())
 
 			httputil.NewSingleHostReverseProxy(upstreamURL).ServeHTTP(w, r)
+			logger.Debug("HTTP Reverse Proxy call",
+				zap.String("username", userInfo.Username()),
+				zap.String("email", userInfo.EmailAddress()),
+				zap.Strings("roles", userInfo.Roles()),
+			)
 		}).
 		Name(routeName)
 

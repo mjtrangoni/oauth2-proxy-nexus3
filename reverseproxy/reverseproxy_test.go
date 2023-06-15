@@ -39,6 +39,7 @@ func TestNew(t *testing.T) {
 		rproxyAccessTokenHeader = "X-Forwarded-Access-Token"
 		rproxy                  = New(
 			nexusTestSrvURL, gitlabOIDCTestSrvURL, nexusTestSrvURL,
+			"gitlab",
 			rproxyAccessTokenHeader,
 			"null", "null", "X-Forwarded-User",
 		)

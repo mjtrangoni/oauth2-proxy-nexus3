@@ -16,7 +16,8 @@ an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonat
                        2     3                    ↕
                        ↕     ↕                    ↕
                        ↔↔↔↔↔ ******************** ↔
-                             * AP (e.g. GitLab) *
+                             * AP (e.g. OICD Generic,*
+                             *          GitLab) *
                              ********************
 ```
 
@@ -33,7 +34,9 @@ an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonat
 | ENV | Mandatory? | Default value | Description |
 |-|-|-|-|
 | `O2PN3_LISTEN_ON` | ☓ | 0.0.0.0:8080 | The [IP]:PORT on which the HTTP server will listen. |
+| `O2PN3_LOG_LEVEL` | ☓ | info | Set Application log level. |
 | `O2PN3_SSL_INSECURE_SKIP_VERIFY` | ☓ | false | Skip SSL verifications if set to `true`. |
+| `O2PN3_AP` | ☓ | oidc_generic | The name of the Auth Provider to be used. (oicd_generic, gitlab) |
 | `O2PN3_AP_URL` | ✓ | | The AP URL on which OAuth operations will be performed. |
 | `O2PN3_AP_ACCESS_TOKEN_HEADER` | ☓ | X-Forwarded-Access-Token | The name of the HTTP header on which the AP OAuth *access_token* will be provided to this service. |
 | `O2PN3_NEXUS3_URL` | ✓ | | The Nexus 3 URL on which sync and reverse-proxying will be performed. |

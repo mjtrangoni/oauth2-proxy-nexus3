@@ -2,24 +2,25 @@ package main
 
 import (
 	"crypto/tls"
-	"log"
 	"net/http"
+	"oauth2-proxy-nexus3/logger"
 	"oauth2-proxy-nexus3/reverseproxy"
 
-	env "github.com/caarlos0/env/v6"
+	env "github.com/caarlos0/env/v8"
+	"go.uber.org/zap"
 )
 
 var cfg = config{}
 
 func main() {
 	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("Failed to parse the configuration: %s", err)
+		logger.Fatal("Failed to parse the configuration", zap.String("error", err.Error()))
 	}
 
 	var (
 		reverseProxy = reverseproxy.New(
-			cfg.NexusURL, cfg.AuthproviderURL, cfg.NexusURL,
-			cfg.AuthproviderAccessTokenHeader,
+			cfg.NexusURL, cfg.AuthProviderURL, cfg.NexusURL,
+			cfg.AuthProvider, cfg.AuthProviderAccessTokenHeader,
 			cfg.NexusAdminUser, cfg.NexusAdminPassword, cfg.NexusRutHeader,
 		)
 
@@ -28,7 +29,9 @@ func main() {
 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: cfg.SSLInsecureSkipVerify}
 
-	log.Println("Starting the proxy")
+	logger.Info("Starting the proxy")
 
-	log.Panicln(server.ListenAndServe())
+	if err := server.ListenAndServe(); err != nil {
+		logger.Panic(err.Error())
+	}
 }

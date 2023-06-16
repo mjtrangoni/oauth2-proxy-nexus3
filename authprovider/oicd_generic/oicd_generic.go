@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"net/url"
 	"oauth2-proxy-nexus3/authprovider"
+	"oauth2-proxy-nexus3/logger"
+
+	"go.uber.org/zap"
 )
 
 // Client implements `authprovider.Client`.
@@ -34,6 +37,7 @@ func (s *Client) GetUserInfo(accessToken string) (authprovider.UserInfo, error) 
 	}
 	defer res.Body.Close()
 
+	logger.Debug("oidc_generic provider response", zap.Any("response", res.Body), zap.Any("header", res.Header))
 	if res.StatusCode != http.StatusOK {
 		if resBody, err := io.ReadAll(res.Body); err == nil {
 			return nil, fmt.Errorf("failed to request the OpenID Connect GET userinfo endpoint on %s: %s", s.URL, resBody)

@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"oauth2-proxy-nexus3/logger"
+
+	"go.uber.org/zap"
 )
 
 // NewTestServer returns an `httptest.Server` that partially implements the GitLab OIDC API.
@@ -14,7 +17,10 @@ func NewTestServer(accessToken string, userInfo *UserInfo) *httptest.Server {
 				payload, _ := json.Marshal(&userInfo)
 
 				w.WriteHeader(200)
-				w.Write(payload)
+				_, err := w.Write(payload)
+				if err != nil {
+					logger.Error("gitlab provider payload write", zap.Error(err))
+				}
 			} else {
 				w.WriteHeader(401)
 			}

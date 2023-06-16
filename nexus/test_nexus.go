@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"oauth2-proxy-nexus3/logger"
 	"strings"
+
+	"go.uber.org/zap"
 )
 
 // NewTestServer returns an `httptest.Server` that partially implements the Nexus 3 API.
@@ -14,7 +17,10 @@ func NewTestServer(userModifiers []UserModifier, roles *[]Role) *httptest.Server
 			payload, _ := json.Marshal(v)
 
 			w.WriteHeader(http.StatusOK)
-			w.Write(payload)
+			_, err := w.Write(payload)
+			if err != nil {
+				logger.Error("nexus payload write", zap.Error(err))
+			}
 		}
 
 		if r.URL.Path == userEndpointPath && r.Method == http.MethodGet {

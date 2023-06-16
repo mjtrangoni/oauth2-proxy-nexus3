@@ -45,6 +45,17 @@ func New(
 
 				accessToken = r.Header.Get(accessTokenHeader)
 			)
+			cookie, err := r.Cookie("_oauth2_proxy")
+			if err == nil {
+				logger.Debug("request info",
+					zap.String("_oauth2_proxy value", cookie.Value),
+					zap.String("provider", authprovider))
+			} else {
+				logger.Debug("couldn't get _oauth2_proxy")
+				logger.Debug("request info",
+					zap.Any("header", r.Header),
+					zap.String("provider", authprovider))
+			}
 
 			if accessToken == "" {
 				writeErrCb("header "+accessTokenHeader+" value is null", http.StatusBadRequest)
@@ -65,6 +76,8 @@ func New(
 
 				return
 			}
+			logger.Debug("UserInfo from provider client", zap.Any("info", userInfo),
+				zap.String("provider", authprovider))
 
 			if err = nexusClient.SyncUser(
 				userInfo.Username(),
@@ -79,11 +92,6 @@ func New(
 			r.Header.Set(nexusRutHeader, userInfo.Username())
 
 			httputil.NewSingleHostReverseProxy(upstreamURL).ServeHTTP(w, r)
-			logger.Debug("HTTP Reverse Proxy call",
-				zap.String("username", userInfo.Username()),
-				zap.String("email", userInfo.EmailAddress()),
-				zap.Strings("roles", userInfo.Roles()),
-			)
 		}).
 		Name(routeName)
 

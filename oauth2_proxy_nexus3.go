@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"net/http"
+	"oauth2-proxy-nexus3/config"
 	"oauth2-proxy-nexus3/logger"
 	"oauth2-proxy-nexus3/reverseproxy"
 
@@ -12,9 +13,9 @@ import (
 	"go.uber.org/zap"
 )
 
-var cfg = config{}
-
 func main() {
+
+	var Cfg = config.Config{}
 
 	buildInfo, ok := debug.ReadBuildInfo()
 	if ok {
@@ -31,21 +32,17 @@ func main() {
 		logger.Error("Couldn't read Build Info")
 	}
 
-	if err := env.Parse(&cfg); err != nil {
+	if err := env.Parse(&Cfg); err != nil {
 		logger.Fatal("Failed to parse the configuration", zap.String("error", err.Error()))
 	}
 
 	var (
-		reverseProxy = reverseproxy.New(
-			cfg.NexusURL, cfg.AuthProviderURL, cfg.NexusURL,
-			cfg.AuthProvider, cfg.AuthProviderAccessTokenHeader,
-			cfg.NexusAdminUser, cfg.NexusAdminPassword, cfg.NexusRutHeader,
-		)
+		reverseProxy = reverseproxy.New(&Cfg)
 
-		server = http.Server{Addr: cfg.ListenOn, Handler: reverseProxy.Router}
+		server = http.Server{Addr: Cfg.ListenOn, Handler: reverseProxy.Router}
 	)
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: cfg.SSLInsecureSkipVerify}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: Cfg.SSLInsecureSkipVerify}
 
 	logger.Info("Starting the proxy")
 

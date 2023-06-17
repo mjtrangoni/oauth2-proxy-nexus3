@@ -3,7 +3,7 @@ package reverseproxy
 import (
 	"net/http"
 	"net/http/httputil"
-	"net/url"
+	"oauth2-proxy-nexus3/config"
 	"oauth2-proxy-nexus3/logger"
 	"oauth2-proxy-nexus3/nexus"
 
@@ -20,18 +20,15 @@ type ReverseProxy struct {
 }
 
 // New initializes and returns a new `ReverseProxy`.
-func New(
-	upstreamURL, authproviderURL, nexusURL *url.URL,
-	authprovider, accessTokenHeader, nexusAdminUser, nexusAdminPassword, nexusRutHeader string,
-) *ReverseProxy {
+func New(cfg *config.Config) *ReverseProxy {
 	s := ReverseProxy{
 		Router: mux.NewRouter().StrictSlash(true),
 	}
 
 	nexusClient := nexus.Client{
-		BaseURL:  nexusURL,
-		Username: nexusAdminUser,
-		Password: nexusAdminPassword,
+		BaseURL:  cfg.NexusURL,
+		Username: cfg.NexusAdminUser,
+		Password: cfg.NexusAdminPassword,
 	}
 
 	s.Router.
@@ -43,27 +40,28 @@ func New(
 					http.Error(w, msg, code)
 				}
 
-				accessToken = r.Header.Get(accessTokenHeader)
+				accessToken = r.Header.Get(cfg.AuthProviderAccessTokenHeader)
 			)
-			cookie, err := r.Cookie("_oauth2_proxy")
+			cookie, err := r.Cookie(cfg.OAuth2ProxyCookieName)
 			if err == nil {
 				logger.Debug("request info",
-					zap.String("_oauth2_proxy value", cookie.Value),
-					zap.String("provider", authprovider))
+					zap.String("oauth2_proxy cookie value", cookie.Value),
+					zap.String("provider", cfg.AuthProvider))
 			} else {
-				logger.Debug("couldn't get _oauth2_proxy")
+				logger.Debug("couldn't get oauth2_proxy cookie value")
 				logger.Debug("request info",
 					zap.Any("header", r.Header),
-					zap.String("provider", authprovider))
+					zap.String("provider", cfg.AuthProvider))
 			}
 
 			if accessToken == "" {
-				writeErrCb("header "+accessTokenHeader+" value is null", http.StatusBadRequest)
+				writeErrCb("header "+cfg.AuthProviderAccessTokenHeader+
+					" value is null", http.StatusBadRequest)
 
 				return
 			}
 
-			authproviderClient, err := newAuthproviderClient(authprovider, authproviderURL)
+			authproviderClient, err := newAuthproviderClient(cfg.AuthProvider, cfg.AuthProviderURL)
 			if err != nil {
 				writeErrCb(err.Error(), http.StatusNotImplemented)
 
@@ -77,7 +75,7 @@ func New(
 				return
 			}
 			logger.Debug("UserInfo from provider client", zap.Any("info", userInfo),
-				zap.String("provider", authprovider))
+				zap.String("provider", cfg.AuthProvider))
 
 			if err = nexusClient.SyncUser(
 				userInfo.Username(),
@@ -89,9 +87,9 @@ func New(
 				return
 			}
 
-			r.Header.Set(nexusRutHeader, userInfo.Username())
+			r.Header.Set(cfg.NexusRutHeader, userInfo.Username())
 
-			httputil.NewSingleHostReverseProxy(upstreamURL).ServeHTTP(w, r)
+			httputil.NewSingleHostReverseProxy(cfg.NexusURL).ServeHTTP(w, r)
 		}).
 		Name(routeName)
 

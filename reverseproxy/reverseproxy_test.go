@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"oauth2-proxy-nexus3/authprovider/gitlab"
+	"oauth2-proxy-nexus3/config"
 	"oauth2-proxy-nexus3/nexus"
 	"testing"
 
@@ -37,12 +38,17 @@ func TestNew(t *testing.T) {
 		nexusTestSrvURL, _ = url.Parse(nexusTestSrv.URL)
 
 		rproxyAccessTokenHeader = "X-Forwarded-Access-Token"
-		rproxy                  = New(
-			nexusTestSrvURL, gitlabOIDCTestSrvURL, nexusTestSrvURL,
-			"gitlab",
-			rproxyAccessTokenHeader,
-			"null", "null", "X-Forwarded-User",
-		)
+
+		cfg = config.Config{
+			NexusURL:                      nexusTestSrvURL,
+			AuthProvider:                  "gitlab",
+			AuthProviderURL:               gitlabOIDCTestSrvURL,
+			AuthProviderAccessTokenHeader: rproxyAccessTokenHeader,
+			NexusAdminUser:                "null",
+			NexusAdminPassword:            "null",
+			NexusRutHeader:                "X-Forwarded-User",
+		}
+		rproxy = New(&cfg)
 
 		rProxySrv = httptest.NewServer(rproxy.Router.GetRoute(routeName).GetHandler())
 	)

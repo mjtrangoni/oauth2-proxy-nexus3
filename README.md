@@ -39,6 +39,7 @@ an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonat
 | `O2PN3_AP` | ☓ | oidc_generic | The name of the Auth Provider to be used. (oicd_generic, gitlab) |
 | `O2PN3_AP_URL` | ✓ | | The AP URL on which OAuth operations will be performed. |
 | `O2PN3_AP_ACCESS_TOKEN_HEADER` | ☓ | X-Forwarded-Access-Token | The name of the HTTP header on which the AP OAuth *access_token* will be provided to this service. |
+| `O2PN3_OAUTH2_PROXY_COOKIE_NAME` | x | `_oauth2_proxy` | The name of the cookie that the *oauth_proxy* creates. Should be changed to use a cookie prefix if --cookie-secure is set. |
 | `O2PN3_NEXUS3_URL` | ✓ | | The Nexus 3 URL on which sync and reverse-proxying will be performed. |
 | `O2PN3_NEXUS3_ADMIN_USER` | ✓ | | A Nexus 3 **admin** user. |
 | `O2PN3_NEXUS3_ADMIN_PASSWORD` | ✓ | | A Nexus 3 **admin** password. |
@@ -48,7 +49,7 @@ an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonat
 
 #### oauth2-proxy
 
-The `-pass-access-token` flag must be set to `true`.
+The `-pass-access-token` flag or `OAUTH2_PROXY_PASS_ACCESS_TOKEN` environment variable must be set to `true`.
 
 #### Nexus 3
 

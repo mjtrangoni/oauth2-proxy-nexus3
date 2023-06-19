@@ -238,11 +238,12 @@ func (s *Client) userModifier(oldUser, newUser *User, existingRoles []Role) (boo
 
 // SyncUser "synchronizes" the user on Nexus 3
 // based on the parameters passed to this method.
-func (s *Client) SyncUser(username, email string, roleIDs []string) error {
+func (s *Client) SyncUser(username, givenName, familyName, email string, roleIDs []string) error {
+
 	user := &User{
 		UserID:       username,
-		FirstName:    username,
-		LastName:     username,
+		FirstName:    givenName,
+		LastName:     familyName,
 		EmailAddress: email,
 		Status:       userStatusActiveValue,
 		RoleIDs:      roleIDs,

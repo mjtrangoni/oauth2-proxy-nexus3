@@ -56,14 +56,26 @@ func (s *Client) GetUserInfo(accessToken string) (authprovider.UserInfo, error) 
 
 // UserInfo implements `authprovider.UserInfo`.
 type UserInfo struct {
-	Nickname string   `json:"nickname"`
-	Email    string   `json:"email"`
-	Groups   []string `json:"groups"`
+	User       string   `json:"nickname"`
+	GivenName  string   `json:"given_name,omitempty"`
+	FamilyName string   `json:"family_name,omitempty"`
+	Email      string   `json:"email"`
+	Groups     []string `json:"groups"`
 }
 
 // Username implements `authprovider.UserInfo`.
 func (s *UserInfo) Username() string {
-	return s.Nickname
+	return s.User
+}
+
+// Givenname implements `authprovider.UserInfo`.
+func (s *UserInfo) Givenname() string {
+	return s.GivenName
+}
+
+// Familyname implements `authprovider.UserInfo`.
+func (s *UserInfo) Familyname() string {
+	return s.FamilyName
 }
 
 // EmailAddress implements `authprovider.UserInfo`.

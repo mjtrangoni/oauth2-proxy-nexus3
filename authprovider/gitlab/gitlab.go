@@ -54,14 +54,28 @@ func (s *Client) GetUserInfo(accessToken string) (authprovider.UserInfo, error) 
 
 // UserInfo implements `authprovider.UserInfo`.
 type UserInfo struct {
-	Nickname string   `json:"nickname"`
-	Email    string   `json:"email"`
-	Groups   []string `json:"groups"`
+	// GitLab does not offer Given and Family names,
+	// https://docs.gitlab.com/ee/integration/openid_connect_provider.html
+	User       string `json:"nickname"`
+	GivenName  string
+	FamilyName string
+	Email      string   `json:"email"`
+	Groups     []string `json:"groups"`
 }
 
 // Username implements `authprovider.UserInfo`.
 func (s *UserInfo) Username() string {
-	return s.Nickname
+	return s.User
+}
+
+// GivenName implements `authprovider.UserInfo`.
+func (s *UserInfo) Givenname() string {
+	return s.GivenName
+}
+
+// FamilyName implements `authprovider.UserInfo`.
+func (s *UserInfo) Familyname() string {
+	return s.FamilyName
 }
 
 // EmailAddress implements `authprovider.UserInfo`.

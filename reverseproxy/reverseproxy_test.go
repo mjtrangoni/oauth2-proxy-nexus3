@@ -19,15 +19,19 @@ func TestNew(t *testing.T) {
 		oauthAccessToken = "token"
 		nexusUser        = nexus.User{
 			UserID:       "foo",
+			FirstName:    "",
+			LastName:     "",
 			EmailAddress: "foo@test.bar",
 			RoleIDs:      []string{"bar"},
 		}
 		nexusAvailablesRoles = []nexus.Role{{ID: nexusUser.RoleIDs[0]}}
 
 		gitlabOIDCTestSrv = gitlab.NewTestServer(oauthAccessToken, &gitlab.UserInfo{
-			Nickname: nexusUser.UserID,
-			Email:    nexusUser.EmailAddress,
-			Groups:   nexusUser.RoleIDs,
+			User:       nexusUser.UserID,
+			GivenName:  nexusUser.FirstName,
+			FamilyName: nexusUser.LastName,
+			Email:      nexusUser.EmailAddress,
+			Groups:     nexusUser.RoleIDs,
 		})
 		gitlabOIDCTestSrvURL, _ = url.Parse(gitlabOIDCTestSrv.URL)
 

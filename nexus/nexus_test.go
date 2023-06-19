@@ -104,14 +104,14 @@ func TestSyncUser(t *testing.T) {
 	require.NotNil(t, expectedUser)
 
 	newUserEmail := "foo@test.foo"
-	require.NoError(t, client.SyncUser(expectedUser.UserID, newUserEmail, expectedUser.RoleIDs))
+	require.NoError(t, client.SyncUser(expectedUser.UserID, expectedUser.FirstName, expectedUser.LastName, newUserEmail, expectedUser.RoleIDs))
 
 	syncedUser, err := client.getUser(existingUser.UserID)
 	require.NoError(t, err)
 	require.Equal(t, newUserEmail, syncedUser.EmailAddress)
 
 	newRoleIDs := []string{"foo", "unexpectedRoleID"}
-	require.NoError(t, client.SyncUser(syncedUser.UserID, syncedUser.EmailAddress, newRoleIDs))
+	require.NoError(t, client.SyncUser(syncedUser.UserID, syncedUser.FirstName, syncedUser.LastName, syncedUser.EmailAddress, newRoleIDs))
 
 	syncedUser, err = client.getUser(syncedUser.UserID)
 	require.NoError(t, err)

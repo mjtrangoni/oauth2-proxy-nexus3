@@ -9,6 +9,8 @@ type Client interface {
 // of a OIDC */userinfo* response.
 type UserInfo interface {
 	Username() string
+	Givenname() string
+	Familyname() string
 	EmailAddress() string
 	Roles() []string
 }

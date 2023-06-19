@@ -91,6 +91,8 @@ func New(cfg *config.Config) *ReverseProxy {
 
 					if err = nexusClient.SyncUser(
 						userInfo.Username(),
+						userInfo.Givenname(),
+						userInfo.Familyname(),
 						userInfo.EmailAddress(),
 						userInfo.Roles(),
 					); err != nil {

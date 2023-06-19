@@ -13,9 +13,9 @@ func TestGetUserInfo(t *testing.T) {
 	var (
 		expectedAccessToken = "expectedToken"
 		expectedUserInfo    = UserInfo{
-			Nickname: "foo",
-			Email:    "foo@test.bar",
-			Groups:   []string{"bar"},
+			User:   "foo",
+			Email:  "foo@test.bar",
+			Groups: []string{"bar"},
 		}
 
 		srv = NewTestServer(expectedAccessToken, &expectedUserInfo)

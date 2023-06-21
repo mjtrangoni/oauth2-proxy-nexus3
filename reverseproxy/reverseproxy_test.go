@@ -52,9 +52,9 @@ func TestNew(t *testing.T) {
 			NexusAdminPassword:            "null",
 			NexusRutHeader:                "X-Forwarded-User",
 		}
-		rproxy = New(&cfg)
+		rproxy = Run(&cfg)
 
-		rProxySrv = httptest.NewServer(rproxy.Router.GetRoute(routeName).GetHandler())
+		rProxySrv = httptest.NewServer(rproxy.Router)
 	)
 
 	defer gitlabOIDCTestSrv.Close()
@@ -70,5 +70,5 @@ func TestNew(t *testing.T) {
 
 	res, err = rProxySrv.Client().Do(sucessfulReq)
 	require.NoError(t, err)
-	require.Equal(t, http.StatusNotFound, res.StatusCode)
+	require.Equal(t, http.StatusBadRequest, res.StatusCode)
 }

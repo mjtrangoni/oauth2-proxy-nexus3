@@ -1,9 +1,12 @@
 # oauth2-proxy-nexus3
 
-![CI](https://github.com/le-garff-yoann/oauth2-proxy-nexus3/workflows/CI/badge.svg)
+![CI](https://github.com/mjtrangoni/oauth2-proxy-nexus3/workflows/CI/badge.svg)
+![golangci-lint](https://github.com/mjtrangoni/oauth2-proxy-nexus3/workflows/golangci-lint/badge.svg)
 
 This service is designed to operate as a proxy between [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy),
 an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonatype Nexus 3.
+It was forked from [oauth2-proxy-nexus3](https://github.com/le-garff-yoann/oauth2-proxy-nexus3), updated, and adapted to work
+with a generic provider.
 
 ## Typical setup
 
@@ -27,7 +30,13 @@ an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonat
 4. Follow the callback to *oauth2-proxy* and finalize the OAuth flow.
 5. *oauth2-proxy* verify and authorize each request to *oauth2-proxy-nexus3*. The OAuth access token if send through a header to *oauth2-proxy-nexus3* by *oauth2-proxy* and is used to keep in sync the Nexus 3 userbase with the AP (which is the OIDC too).
 
-**A demonstrative setup of this is available [here](docker/)**.
+## Container image
+
+Built images are hosted at quay.io.
+
+```
+$ docker pull quay.io/mjtrangoni/oauth2-proxy-nexus3
+```
 
 ## Configuration
 
@@ -44,6 +53,9 @@ an Auth provider (AP), which is the one configured for *oauth2-proxy*, and Sonat
 | `O2PN3_NEXUS3_ADMIN_USER` | ✓ | | A Nexus 3 **admin** user. |
 | `O2PN3_NEXUS3_ADMIN_PASSWORD` | ✓ | | A Nexus 3 **admin** password. |
 | `O2PN3_NEXUS3_RUT_HEADER` | ☓ | X-Forwarded-User | The name of the HTTP header used by the Rut Realm/capability (Nexus 3) for the authentication. |
+| `O2PN3_REDIS_CONNECTION_URL` | ☓ | localhost:6379 | The tcp connection to the redis instance. |
+| `O2PN3_REDIS_PASSWORD` | ☓ | "" | The password of the redis instance. Default is empty or no password. |
+| `O2PN3_REDIS_TTL_HOURS` | ☓ | 168 | The number of hours until the *oauth2-proxy* session cookie expire. |
 
 ### Prerequisites
 
@@ -54,3 +66,7 @@ The `-pass-access-token` flag or `OAUTH2_PROXY_PASS_ACCESS_TOKEN` environment va
 #### Nexus 3
 
 The Rut Realm/capability must be enabled and configured the use the same HTTP header as configured in via `$O2PN3_NEXUS3_RUT_HEADER`.
+
+#### Redis
+
+A redis instance needs to be reachable to store the *oauth2-proxy* session cookie.

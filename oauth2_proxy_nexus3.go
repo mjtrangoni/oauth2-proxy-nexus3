@@ -37,7 +37,7 @@ func main() {
 	}
 
 	var (
-		reverseProxy = reverseproxy.New(&Cfg)
+		reverseProxy = reverseproxy.Run(&Cfg)
 
 		server = http.Server{Addr: Cfg.ListenOn, Handler: reverseProxy.Router}
 	)

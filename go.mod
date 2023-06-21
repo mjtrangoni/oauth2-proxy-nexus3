@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/caarlos0/env/v8 v8.0.0
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/mux v1.8.0
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/stretchr/testify v1.8.0
 	github.com/thoas/go-funk v0.9.3

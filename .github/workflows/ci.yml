@@ -5,6 +5,8 @@ on:
     branches:
       - "main"
       - "devel"
+    tags:
+      - "v*.*.*"
 
 jobs:
   container:
@@ -29,4 +31,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: quay.io/mjtrangoni/oauth2-proxy-nexus3:latest
+          tags: |
+            quay.io/mjtrangoni/oauth2-proxy-nexus3:${{  github.ref_name }}
+            quay.io/mjtrangoni/oauth2-proxy-nexus3:latest

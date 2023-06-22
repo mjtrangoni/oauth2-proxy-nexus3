@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -118,7 +118,7 @@ func (s *Client) createUser(user *User) error {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		if resBody, err := ioutil.ReadAll(res.Body); err == nil {
+		if resBody, err := io.ReadAll(res.Body); err == nil {
 			return fmt.Errorf(`cannot create the user "%s" on %s: %s`, user.UserID, s.BaseURL.String(), resBody)
 		}
 
@@ -152,7 +152,7 @@ func (s *Client) modifyUser(username string, userModifier *UserModifier) error {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusNoContent {
-		if resBody, err := ioutil.ReadAll(res.Body); err == nil {
+		if resBody, err := io.ReadAll(res.Body); err == nil {
 			return fmt.Errorf(`cannot modify the user "%s" on %s (HTTP %d): %s`, userModifier.UserID, s.BaseURL.String(), res.StatusCode, resBody)
 		}
 
@@ -238,11 +238,12 @@ func (s *Client) userModifier(oldUser, newUser *User, existingRoles []Role) (boo
 
 // SyncUser "synchronizes" the user on Nexus 3
 // based on the parameters passed to this method.
-func (s *Client) SyncUser(username, email string, roleIDs []string) error {
+func (s *Client) SyncUser(username, givenName, familyName, email string, roleIDs []string) error {
+
 	user := &User{
 		UserID:       username,
-		FirstName:    username,
-		LastName:     username,
+		FirstName:    givenName,
+		LastName:     familyName,
 		EmailAddress: email,
 		Status:       userStatusActiveValue,
 		RoleIDs:      roleIDs,

@@ -19,7 +19,7 @@ services:
       - oauth2-proxy
 
   gitlab:
-    image: gitlab/gitlab-ce:12.9.2-ce.0
+    image: gitlab/gitlab-ce:16.0.4-ce.0
     environment:
       GITLAB_ROOT_PASSWORD: "${GITLAB_ROOT_PASSWORD:-root}"
       GITLAB_OMNIBUS_CONFIG: |
@@ -29,7 +29,7 @@ services:
         nginx['listen_https'] = false
 
   oauth2-proxy:
-    image: quay.io/oauth2-proxy/oauth2-proxy:v5.1.0
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
     environment:
       OAUTH2_PROXY_REVERSE_PROXY: "true"
       OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY: "true"
@@ -52,10 +52,7 @@ services:
       - oauth2-proxy-nexus3
 
   oauth2-proxy-nexus3:
-    build:
-      context: ../
-      args:
-        GO_TAGS: authprovider_gitlab
+    image: quay.io/mjtrangoni/oauth2-proxy-nexus3:latest
     environment:
       O2PN3_LISTEN_ON: 0.0.0.0:80
       O2PN3_SSL_INSECURE_SKIP_VERIFY: "true"

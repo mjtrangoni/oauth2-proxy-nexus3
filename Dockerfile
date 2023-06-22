@@ -1,14 +1,11 @@
-FROM golang:1.14.2
-
-ARG GO_TAGS
+FROM golang:1.20.5 AS builder
 
 COPY . $GOPATH/src/oauth2-proxy-nexus3/
-RUN \
-    cd $GOPATH/src/oauth2-proxy-nexus3 && \
-    CGO_ENABLED=0 go build -tags="${GO_TAGS}" -o /tmp/oauth2-proxy-nexus3
+WORKDIR "$GOPATH/src/oauth2-proxy-nexus3"
+RUN CGO_ENABLED=0 go build -o /tmp/oauth2-proxy-nexus3
 
 FROM scratch
 
-COPY --from=0 /tmp/oauth2-proxy-nexus3 /
+COPY --from=builder /tmp/oauth2-proxy-nexus3 /
 
 ENTRYPOINT [ "/oauth2-proxy-nexus3" ]

@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.stackdump
+oauth2-proxy-nexus3
 
 # Test binary, built with `go test -c`.
 *.test

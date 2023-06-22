@@ -1,4 +1,4 @@
-package gitlab
+package oicd_generic
 
 import (
 	"net/url"

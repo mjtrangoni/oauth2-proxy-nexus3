@@ -1,4 +1,4 @@
-FROM golang:1.20.5 AS builder
+FROM golang:1.22 AS builder
 
 COPY . $GOPATH/src/oauth2-proxy-nexus3/
 WORKDIR "$GOPATH/src/oauth2-proxy-nexus3"

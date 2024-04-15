@@ -8,12 +8,12 @@ import (
 	"oauth2-proxy-nexus3/authprovider/oicd_generic"
 )
 
-func newAuthproviderClient(authProvider string, URL *url.URL) (authprovider.Client, error) {
+func newAuthproviderClient(authProvider string, providerURL *url.URL) (authprovider.Client, error) {
 	switch authProvider {
 	case "oicd_generic":
-		return &oicd_generic.Client{URL: URL}, nil
+		return &oicd_generic.Client{URL: providerURL}, nil
 	case "gitlab":
-		return &gitlab.Client{URL: URL}, nil
+		return &gitlab.Client{URL: providerURL}, nil
 	default:
 		return nil, fmt.Errorf("%s AuthProvider not available", authProvider)
 	}

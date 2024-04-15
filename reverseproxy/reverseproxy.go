@@ -30,7 +30,6 @@ func writeErrCb(w http.ResponseWriter, msg string, code int) {
 
 // Run initializes and returns a new `ReverseProxy`.
 func Run(cfg *config.Config) *ReverseProxy {
-
 	var (
 		ctx      = context.Background()
 		username = ""

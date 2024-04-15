@@ -41,13 +41,11 @@ func TestNew(t *testing.T) {
 		)
 		nexusTestSrvURL, _ = url.Parse(nexusTestSrv.URL)
 
-		rproxyAccessTokenHeader = "X-Forwarded-Access-Token"
-
 		cfg = config.Config{
 			NexusURL:                      nexusTestSrvURL,
 			AuthProvider:                  "gitlab",
 			AuthProviderURL:               gitlabOIDCTestSrvURL,
-			AuthProviderAccessTokenHeader: rproxyAccessTokenHeader,
+			AuthProviderAccessTokenHeader: "X-Forwarded-Access-Token",
 			NexusAdminUser:                "null",
 			NexusAdminPassword:            "null",
 			NexusRutHeader:                "X-Forwarded-User",
@@ -65,8 +63,8 @@ func TestNew(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, http.StatusBadRequest, res.StatusCode)
 
-	sucessfulReq, _ := http.NewRequest("GET", rProxySrv.URL, nil)
-	sucessfulReq.Header.Add(rproxyAccessTokenHeader, oauthAccessToken)
+	sucessfulReq, _ := http.NewRequest("GET", rProxySrv.URL, http.NoBody)
+	sucessfulReq.Header.Add("X-Forwarded-Access-Token", oauthAccessToken)
 
 	res, err = rProxySrv.Client().Do(sucessfulReq)
 	require.NoError(t, err)

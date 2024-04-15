@@ -54,9 +54,9 @@ type UserModifier struct {
 }
 
 func (s *Client) newUserEndpointURL() *url.URL {
-	url, _ := url.Parse(s.BaseURL.String() + userEndpointPath)
+	urlEndpoint, _ := url.Parse(s.BaseURL.String() + userEndpointPath)
 
-	return url
+	return urlEndpoint
 }
 
 func (s *Client) getUser(userID string) (*User, error) {
@@ -67,7 +67,7 @@ func (s *Client) getUser(userID string) (*User, error) {
 
 	endpoint.RawQuery = endpointQuery.Encode()
 
-	req, err := http.NewRequest("GET", endpoint.String(), nil)
+	req, err := http.NewRequest("GET", endpoint.String(), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create the Nexus 3 GET user request: %s", err)
 	}
@@ -165,7 +165,7 @@ func (s *Client) modifyUser(username string, userModifier *UserModifier) error {
 func (s *Client) getRoles() ([]Role, error) {
 	endpoint, _ := url.Parse(s.BaseURL.String() + roleEndpointPath)
 
-	req, err := http.NewRequest("GET", endpoint.String(), nil)
+	req, err := http.NewRequest("GET", endpoint.String(), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create the Nexus 3 GET roles request: %s", err)
 	}
@@ -239,7 +239,6 @@ func (s *Client) userModifier(oldUser, newUser *User, existingRoles []Role) (boo
 // SyncUser "synchronizes" the user on Nexus 3
 // based on the parameters passed to this method.
 func (s *Client) SyncUser(username, givenName, familyName, email string, roleIDs []string) error {
-
 	user := &User{
 		UserID:       username,
 		FirstName:    givenName,

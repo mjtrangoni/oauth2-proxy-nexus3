@@ -21,10 +21,10 @@ type Client struct {
 func (s *Client) GetUserInfo(accessToken string) (authprovider.UserInfo, error) {
 	endpoint, err := url.Parse(s.URL.String())
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse the OpenID Connect URL: %s", err)
+		return nil, fmt.Errorf("failed to parse the OpenID Connect URL: %s", err)
 	}
 
-	req, err := http.NewRequest("GET", endpoint.String(), nil)
+	req, err := http.NewRequest("GET", endpoint.String(), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create the OpenID Connect GET userinfo request: %s", err)
 	}

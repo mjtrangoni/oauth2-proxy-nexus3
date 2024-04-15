@@ -1,0 +1,103 @@
+# options for analysis running
+run:
+  modules-download-mode: mod
+linters-settings:
+  dogsled:
+    # Checks assignments with too many blank identifiers.
+    # Default: 2
+    max-blank-identifiers: 2
+  funlen:
+    lines: 90
+  depguard:
+    # Rules to apply.
+    # Default: Only allow $gostd in all files.
+    rules:
+      # Name of a rule.
+      main:
+        # List of file globs that will match this list of settings to compare against.
+        # Default: $all
+        files:
+          - "!**/*_a _file.go"
+        # List of allowed packages.
+        allow:
+          - $gostd
+          - oauth2-proxy-nexus3
+          - github.com/redis/go-redis/v9
+          - github.com/caarlos0/env/v8
+          - github.com/go-chi/chi/v5
+          - github.com/stretchr/testify/require
+          - github.com/google/uuid
+          - github.com/thoas/go-funk
+        # Packages that are not allowed where the value is a suggestion.
+        deny:
+          - pkg: "github.com/sirupsen/logrus"
+            desc: not allowed
+          - pkg: "github.com/pkg/errors"
+            desc: Should be replaced by standard lib errors package
+  misspell:
+    locale: US
+  lll:
+    line-length: 140
+  goimports:
+    local-prefixes: github.com/golangci/golangci-lint
+  gocritic:
+    enabled-tags:
+      - performance
+      - style
+      - experimental
+    disabled-checks:
+      - whyNoLint
+      - wrapperFunc
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - exhaustive
+    - funlen
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - nolintlint
+    - revive
+    - rowserrcheck
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+issues:
+  exclude-rules:
+    - text: "response body must be closed"
+      linters:
+        - bodyclose
+    - text: "don't use an underscore in package name"
+      linters:
+        - revive
+    - text: "should not use underscores in package names"
+      linters:
+        - stylecheck
+    - text: "ifElseChain: rewrite if-else to switch statement"
+      linters:
+        - gocritic
+    - text: "TLS InsecureSkipVerify may be true"
+      linters:
+        - gosec

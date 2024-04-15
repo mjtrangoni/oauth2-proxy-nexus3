@@ -6,6 +6,7 @@ import (
 	"oauth2-proxy-nexus3/config"
 	"oauth2-proxy-nexus3/logger"
 	"oauth2-proxy-nexus3/reverseproxy"
+	"time"
 
 	"runtime/debug"
 
@@ -14,7 +15,6 @@ import (
 )
 
 func main() {
-
 	var Cfg = config.Config{}
 
 	buildInfo, ok := debug.ReadBuildInfo()
@@ -39,7 +39,11 @@ func main() {
 	var (
 		reverseProxy = reverseproxy.Run(&Cfg)
 
-		server = http.Server{Addr: Cfg.ListenOn, Handler: reverseProxy.Router}
+		server = http.Server{
+			Addr:              Cfg.ListenOn,
+			Handler:           reverseProxy.Router,
+			ReadHeaderTimeout: 60 * time.Second, // timeout for HTTP requests.
+		}
 	)
 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: Cfg.SSLInsecureSkipVerify}

@@ -25,9 +25,9 @@ func NewTestServer(userModifiers []UserModifier, roles *[]Role) *httptest.Server
 
 		if r.URL.Path == userEndpointPath && r.Method == http.MethodGet {
 			if userID := r.URL.Query().Get("userId"); userID != "" {
-				for _, userModifier := range userModifiers {
-					if userModifier.UserID == userID {
-						writeWithDataCb([]User{userModifier.User})
+				for idx := range userModifiers {
+					if userModifiers[idx].UserID == userID {
+						writeWithDataCb([]User{userModifiers[idx].User})
 
 						return
 					}

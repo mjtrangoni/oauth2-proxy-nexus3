@@ -20,10 +20,10 @@ type Client struct {
 func (s *Client) GetUserInfo(accessToken string) (authprovider.UserInfo, error) {
 	endpoint, err := url.Parse(fmt.Sprintf(s.URL.String() + userInfoEndpointPath))
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse the GitLab URL: %s", err)
+		return nil, fmt.Errorf("failed to parse the GitLab URL: %s", err)
 	}
 
-	req, err := http.NewRequest("GET", endpoint.String(), nil)
+	req, err := http.NewRequest("GET", endpoint.String(), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create the GitLab GET userinfo request: %s", err)
 	}

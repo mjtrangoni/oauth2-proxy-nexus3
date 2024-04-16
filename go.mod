@@ -3,7 +3,7 @@ module oauth2-proxy-nexus3
 go 1.19
 
 require (
-	github.com/caarlos0/env/v8 v8.0.0
+	github.com/caarlos0/env/v10 v10.0.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/google/uuid v1.6.0
 	github.com/redis/go-redis/v9 v9.5.1

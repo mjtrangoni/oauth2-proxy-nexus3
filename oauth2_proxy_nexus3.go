@@ -10,7 +10,7 @@ import (
 
 	"runtime/debug"
 
-	env "github.com/caarlos0/env/v8"
+	env "github.com/caarlos0/env/v10"
 	"go.uber.org/zap"
 )
 

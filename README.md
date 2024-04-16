@@ -32,9 +32,10 @@ with a generic provider.
 
 ## Container image
 
-Built images are hosted at quay.io.
+Built images are hosted at ghcr.io, and quay.io.
 
 ```
+$ docker pull ghcr.io/mjtrangoni/oauth2-proxy-nexus3
 $ docker pull quay.io/mjtrangoni/oauth2-proxy-nexus3
 ```
 
